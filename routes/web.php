@@ -1,6 +1,12 @@
 <?php
 
+use App\Models\ChecklistGroup;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\PageController;
+use App\Http\Controllers\Admin\ChecklistController;
+use App\Http\Controllers\Admin\ChecklistGroupController;
+use App\Http\Controllers\Admin\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +26,12 @@ Route::get('/', function () {
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
     return view('dashboard');
 })->name('dashboard');
+
+Route::group(['middleware' => 'auth'], function () {
+    Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'is_admin'], function () {
+        Route::resource('pages', PageController::class);
+        Route::resource('checklist_groups', ChecklistGroupController::class);
+        Route::resource('checklist_groups.checklists', ChecklistController::class);
+        Route::resource('checklists.tasks', TaskController::class);
+    });
+});
